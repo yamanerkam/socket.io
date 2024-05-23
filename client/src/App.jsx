@@ -1,15 +1,21 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import io from 'socket.io-client'
 const socket = io.connect('http://localhost:3001')
 
 function App() {
   const [message, setMessage] = useState('')
+  const [receivedMessage, setRecivedMessage] = useState('')
   const [messages, setMessages] = useState([])
   const sendMessage = () => {
-    socket.emit('send_message', { message: message })
-    setMessages([...messages, message]);
+    socket.emit('send_message', { message })
+
   }
+  useEffect(() => {
+    socket.on('receive_message', (data) => {
+      setRecivedMessage(data.message);
+    })
+  }, [socket])
 
   return (
     <>
@@ -25,6 +31,9 @@ function App() {
         {messages && messages.map((msg, index) => (
           <li key={index}>{msg}</li>
         ))}
+
+        <h1>message</h1>
+        {receivedMessage}
       </ul>
 
     </>
