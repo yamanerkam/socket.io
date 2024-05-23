@@ -19,6 +19,10 @@ const io = new Server(server, {
     }
 })
 
+io.on('connection', (socket) => {
+    socket.emit('connect', { message: 'a new client connected' })
+})
+
 server.listen(port, () => {
     console.log(`listening on ${port}`)
 })
