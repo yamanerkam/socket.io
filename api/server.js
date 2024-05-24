@@ -19,7 +19,7 @@ io.on("connection", (socket) => {
     console.log(`User Connected: ${socket.id}`);
 
     socket.on('message', (body) => {
-        console.log(body)
+        console.log(body + ' ' + socket.id)
         socket.broadcast.emit("message", {
             body,
             from: socket.id,

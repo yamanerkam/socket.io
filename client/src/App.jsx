@@ -20,18 +20,20 @@ function App() {
     setMessage("");
     socket.emit("message", newMessage.body);
 
+
   }
 
   useEffect(() => {
     socket.on("message", receiveMessage)
-    console.log(messages)
     return () => {
       socket.off("message", receiveMessage);
     };
   }, []);
 
-  const receiveMessage = (message) => {
-    setMessages(state => [message, ...state]);
+  // emit takes on recieves
+
+  const receiveMessage = (data) => {
+    setMessages(state => [data, ...state]);
   }
 
 
@@ -56,7 +58,7 @@ function App() {
       <ul className='list'>
         {messages && messages.map((msg, index) => (
           <li key={index} >
-            <strong>{msg.from.substring(0, 5)}:</strong> {msg.body}
+            <strong>{msg.from.substring(0, 3)}:</strong> {msg.body}
           </li>
         ))}
 
