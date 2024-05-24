@@ -5,35 +5,55 @@ const socket = io.connect('http://localhost:3001')
 
 function App() {
   const [message, setMessage] = useState('')
-  const [receivedMessage, setRecivedMessage] = useState('')
   const [messages, setMessages] = useState([])
-  const sendMessage = () => {
-    socket.emit('send_message', { message })
+
+  const sendMessage = (event) => {
+    event.preventDefault();
+    const newMessage = {
+      body: message,
+      from: socket.id,
+    };
+    setMessages(state => [newMessage, ...state]);
+    setMessage("");
+    socket.emit("message", newMessage.body);
 
   }
+
   useEffect(() => {
-    socket.on('receive_message', (data) => {
-      setRecivedMessage(data.message);
-    })
-  }, [socket])
+    socket.on("message", receiveMessage)
+
+    return () => {
+      socket.off("message", receiveMessage);
+    };
+  }, []);
+
+  const receiveMessage = (message) => {
+    setMessages(state => [message, ...state]);
+  }
+
 
   return (
     <>
 
       <h1>message</h1>
       <div className="card">
-        <input onChange={((e) => setMessage(e.target.value))} value={message} placeholder='Message...' type="text" />
+        <input
+          onChange={((e) => setMessage(e.target.value))}
+          value={message}
+          placeholder='Message...'
+          type="text" />
         <button onClick={sendMessage}> send
         </button>
       </div >
 
       <ul className='list'>
         {messages && messages.map((msg, index) => (
-          <li key={index}>{msg}</li>
+          <li key={index} >
+            <strong>{msg.from}:</strong> {msg.body}
+          </li>
         ))}
 
-        <h1>message</h1>
-        {receivedMessage}
+
       </ul>
 
     </>

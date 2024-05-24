@@ -5,7 +5,6 @@ const { Server } = require("socket.io");
 const cors = require("cors");
 
 app.use(cors());
-
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -18,11 +17,19 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
     console.log(`User Connected: ${socket.id}`);
-    socket.on('send_message', (data) => {
-        console.log(data)
-        socket.broadcast.emit('receive_message', data)
+
+    socket.on('message', (body) => {
+        console.log(body)
+        socket.broadcast.emit("message", {
+            body,
+            from: socket.id.slice(5),
+        });
 
     })
+
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
 });
 
 server.listen(3001, () => {
