@@ -18,9 +18,17 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
     console.log(`User Connected: ${socket.id}`);
 
-    socket.on('message', (body) => {
-        console.log(body + ' ' + socket.id)
-        socket.broadcast.emit("message", {
+    socket.on('joinRoom', function (room) {
+        socket.join(room);
+        console.log(`Socket ${socket.id} joined room ${room}`);
+
+    });
+
+
+    socket.on('message', (body, room) => {
+        console.log(body + ' ' + socket.id + ' ' + room)
+        socket.to(room).emit("message", {
+
             body,
             from: socket.id,
         });

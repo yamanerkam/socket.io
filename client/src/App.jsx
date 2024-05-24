@@ -8,6 +8,12 @@ function App() {
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState([])
 
+  const [room, setRoom] = useState('room1')
+
+  socket.emit('joinRoom', room);
+
+
+
   const sendMessage = (event) => {
     event.preventDefault();
 
@@ -18,12 +24,14 @@ function App() {
 
     setMessages(state => [newMessage, ...state]);
     setMessage("");
-    socket.emit("message", newMessage.body);
+    socket.emit("message", newMessage.body, room);
 
 
   }
 
+
   useEffect(() => {
+    console.log('ewew')
     socket.on("message", receiveMessage)
     return () => {
       socket.off("message", receiveMessage);
@@ -33,6 +41,7 @@ function App() {
   // emit takes on recieves
 
   const receiveMessage = (data) => {
+    console.log(data)
     setMessages(state => [data, ...state]);
   }
 
