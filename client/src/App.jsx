@@ -4,15 +4,18 @@ import io from 'socket.io-client'
 const socket = io.connect('http://localhost:3001')
 
 function App() {
+
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState([])
 
   const sendMessage = (event) => {
     event.preventDefault();
+
     const newMessage = {
       body: message,
       from: socket.id,
     };
+
     setMessages(state => [newMessage, ...state]);
     setMessage("");
     socket.emit("message", newMessage.body);
@@ -21,7 +24,7 @@ function App() {
 
   useEffect(() => {
     socket.on("message", receiveMessage)
-
+    console.log(messages)
     return () => {
       socket.off("message", receiveMessage);
     };
@@ -36,20 +39,24 @@ function App() {
     <>
 
       <h1>message</h1>
-      <div className="card">
-        <input
-          onChange={((e) => setMessage(e.target.value))}
-          value={message}
-          placeholder='Message...'
-          type="text" />
-        <button onClick={sendMessage}> send
-        </button>
+      <div >
+        <form className="card" onSubmit={sendMessage} action="submit">
+          <input
+            required
+            onChange={((e) => setMessage(e.target.value))}
+            value={message}
+            placeholder='Message...'
+            type="text" />
+          <button type='submit'>send</button>
+
+        </form>
+
       </div >
 
       <ul className='list'>
         {messages && messages.map((msg, index) => (
           <li key={index} >
-            <strong>{msg.from}:</strong> {msg.body}
+            <strong>{msg.from.substring(0, 5)}:</strong> {msg.body}
           </li>
         ))}
 
