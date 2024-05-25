@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import io from 'socket.io-client'
-const socket = io.connect('http://localhost:3001')
+const socket = io('http://192.168.1.3:3001', { transports: ['websocket'], jsonp: false, forceNew: true, })
 
-function App() {
+function App(yar) {
 
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState([])
@@ -31,7 +31,6 @@ function App() {
 
 
   useEffect(() => {
-    console.log('ewew')
     socket.on("message", receiveMessage)
     return () => {
       socket.off("message", receiveMessage);
